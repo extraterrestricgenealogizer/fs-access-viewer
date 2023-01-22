@@ -1,0 +1,18 @@
+{
+    "manifest_version": 3,
+    "name": "FS Access Viewer",
+    "description": "View the permissions required to access a FamilySearch record.",
+    "version": "1.0.0",
+    "content_scripts": [{
+        "matches": ["*://www.familysearch.org/search/catalog/*", "*://www.familysearch.org/ark:/61903/1:1:*"],
+        "js": ["main_script.js"],
+        "run_at": "document_end"
+    }],
+    "browser_specific_settings": {
+      "gecko": {
+        "id": "{924f15a1-9271-43bb-96e7-85fd4b97340d}",
+        "strict_min_version": "49.0",
+        "update_url": "https://raw.githubusercontent.com/extraterrestricgenealogizer/fs-access-viewer/main/updates.json"
+      }
+    }
+}
