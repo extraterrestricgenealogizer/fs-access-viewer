@@ -92,6 +92,19 @@ async function r_parse_json_info(r) {
         }
     }
     
+    if ((r.persons) && (film_no === "") && (dgs_no === "")) {
+        for (const p of r.persons) {
+            for (const f of p.fields) {
+                if (f.type === "http://familysearch.org/types/fields/DigitalFilmNumber") {
+                    dgs_no = f.values[0].text;
+                }
+                else if (f.type === "http://familysearch.org/types/fields/FilmNumber") {
+                    film_no = f.values[0].text;
+                }
+            }
+        }
+    }
+    
     return {dgs: dgs_no, film: film_no};
 }
 
