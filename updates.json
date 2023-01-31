@@ -1,7 +1,22 @@
 {
   "addons": {
     "{924f15a1-9271-43bb-96e7-85fd4b97340d}": {
-      "updates": []
+      "updates": [
+        {
+          "version": "1.0.0",
+          "update_link": "https://github.com/extraterrestricgenealogizer/fs-access-viewer/releases/download/v.1.0.0/fs-access_1.0.0.xpi",
+          "applications": {
+            "gecko": { "strict_min_version": "49.0" }
+          }
+        },
+        {
+          "version": "1.0.1",
+          "update_link": "https://github.com/extraterrestricgenealogizer/fs-access-viewer/releases/download/v1.0.1/fs-access_1.0.1.xpi",
+          "applications": {
+            "gecko": { "strict_min_version": "49.0" }
+          }
+        }
+      ]
     }
   }
 }
