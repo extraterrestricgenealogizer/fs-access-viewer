@@ -11,7 +11,7 @@
         },
         {
           "version": "1.0.1",
-          "update_link": "https://github.com/extraterrestricgenealogizer/fs-access-viewer/releases/download/v1.0.1/fs-access_1.0.1.xpi",
+          "update_link": "https://github.com/extraterrestricgenealogizer/fs-access-viewer/releases/download/v1.0.1/fs-access_1.0.1_signed.xpi",
           "applications": {
             "gecko": { "strict_min_version": "49.0" }
           }
