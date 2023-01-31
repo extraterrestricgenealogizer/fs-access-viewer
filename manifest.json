@@ -2,7 +2,7 @@
     "manifest_version": 3,
     "name": "FS Access Viewer",
     "description": "View the permissions required to access a FamilySearch record.",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "content_scripts": [{
         "matches": ["*://www.familysearch.org/search/catalog/*", "*://www.familysearch.org/ark:/61903/1:1:*"],
         "js": ["main_script.js"],
