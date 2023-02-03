@@ -59,10 +59,8 @@ async function r_fetch_gedcomx(ark_id) {
         }
     });
     const result = await response.json();
-    if (response.ok) {
-        console.log(result)
+    if (response.ok)
         return result;
-    }
     else
         return "";
 }
