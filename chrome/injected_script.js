@@ -106,7 +106,7 @@ async function r_parse_json_info(r) {
     let extracted = {};
     
     if (r.fields) {
-        extracted = await extract_info_from_fields(r.fields);
+        extracted = await r_extract_info_from_fields(r.fields);
         film_no   = extracted.film;
         dgs_no    = extracted.dgs;
     }
@@ -114,7 +114,7 @@ async function r_parse_json_info(r) {
     if ((r.persons) && (film_no === "") && (dgs_no === "")) {
         for (const p of r.persons) {
             if (p.fields) {
-                extracted = await extract_info_from_fields(r.fields);
+                extracted = await r_extract_info_from_fields(r.fields);
                 film_no   = extracted.film;
                 dgs_no    = extracted.dgs;
             }
