@@ -94,7 +94,7 @@ async function r_extract_info_from_fields(fields) {
             film_no = f.values[0].text;
         }
     }
-    
+
     return {dgs: dgs_no, film: film_no};
 }
 
@@ -104,13 +104,13 @@ async function r_parse_json_info(r) {
     let dgs_no    = "";
     let ark_id    = "";
     let extracted = {};
-    
+
     if (r.fields) {
         extracted = await r_extract_info_from_fields(r.fields);
         film_no   = extracted.film;
         dgs_no    = extracted.dgs;
     }
-    
+
     if ((r.persons) && (film_no === "") && (dgs_no === "")) {
         for (const p of r.persons) {
             if (p.fields) {
@@ -120,7 +120,7 @@ async function r_parse_json_info(r) {
             }
         }
     }
-    
+
     if ((r.sourceDescriptions) && (film_no === "") && (dgs_no === "")) {
         for (const s of r.sourceDescriptions) {
             if (s.resourceType === "http://gedcomx.org/DigitalArtifact") {
@@ -128,8 +128,7 @@ async function r_parse_json_info(r) {
             }
         }
     }
-    
-    
+
     return {dgs: dgs_no, film: film_no, ark: ark_id};
 }
 
