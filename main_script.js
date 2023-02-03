@@ -79,41 +79,64 @@ async function r_fetch_dgsno_from_film(f) {
 }
 
 
-async function r_parse_json_info(r) {
+async function r_extract_info_from_fields(fields) {
     let film_no = "";
     let dgs_no = "";
-    
-    for (const f of r.fields) {
+
+    for (const f of fields) {
         if (f.type === "http://familysearch.org/types/fields/DigitalFilmNumber") {
             dgs_no = f.values[0].text;
+        }
+        else if (f.type === "http://familysearch.org/types/fields/DigitalFilmNbr") {
+            dgs_no = f.values[0].text.split("_")[0];
         }
         else if (f.type === "http://familysearch.org/types/fields/FilmNumber") {
             film_no = f.values[0].text;
         }
     }
-    
-    if ((r.persons) && (film_no === "") && (dgs_no === "")) {
-        for (const p of r.persons) {
-            for (const f of p.fields) {
-                if (f.type === "http://familysearch.org/types/fields/DigitalFilmNumber") {
-                    dgs_no = f.values[0].text;
-                }
-                else if (f.type === "http://familysearch.org/types/fields/FilmNumber") {
-                    film_no = f.values[0].text;
-                }
-            }
-        }
-    }
-    
+
     return {dgs: dgs_no, film: film_no};
 }
 
 
-async function r_fetch_permissions(dgs_no) {
-    const padded_dgs_no = String(dgs_no).padStart(9, "0");
-    const response = await fetch("https://sg30p0.familysearch.org/service/records/storage/dascloud/das/v2/dgs:" + padded_dgs_no + "/permission");
+async function r_parse_json_info(r) {
+    let film_no   = "";
+    let dgs_no    = "";
+    let ark_id    = "";
+    let extracted = {};
+
+    if (r.fields) {
+        extracted = await extract_info_from_fields(r.fields);
+        film_no   = extracted.film;
+        dgs_no    = extracted.dgs;
+    }
+
+    if ((r.persons) && (film_no === "") && (dgs_no === "")) {
+        for (const p of r.persons) {
+            if (p.fields) {
+                extracted = await extract_info_from_fields(r.fields);
+                film_no   = extracted.film;
+                dgs_no    = extracted.dgs;
+            }
+        }
+    }
+
+    if ((r.sourceDescriptions) && (film_no === "") && (dgs_no === "")) {
+        for (const s of r.sourceDescriptions) {
+            if (s.resourceType === "http://gedcomx.org/DigitalArtifact") {
+                ark_id = s["http://gedcomx.org/Persistent"][0].replace("https://www.familysearch.org/ark:/61903/","").split("?")[0]
+            }
+        }
+    }
+
+    return {dgs: dgs_no, film: film_no, ark: ark_id};
+}
+
+
+async function r_fetch_permissions(id) {
+    const response = await fetch("https://sg30p0.familysearch.org/service/records/storage/dascloud/das/v2/" + id + "/permission");
     const result = response.text();
-    
+
     if (response.ok)
         return result;
     else
@@ -142,6 +165,30 @@ function r_display_permissions(permissions) {
 }
 
 
+async function r_determine_permissions_from_ids(info) {
+    if (info.dgs !== "") {
+        let dgs_id = "dgs:" + String(info.dgs).padStart(9, "0");
+        perm_str = await r_fetch_permissions(dgs_id);
+    }
+
+    else if (info.dgs === "" && info.film !== "") {
+        info.dgs = await r_fetch_dgsno_from_film(info.film);
+        let dgs_id = "dgs:" + String(info.dgs).padStart(9, "0");
+        perm_str = await r_fetch_permissions(dgs_id);
+    }
+
+    else if (info.dgs === "" && info.film === "" && info.ark !== "") {
+        perm_str = await r_fetch_permissions(info.ark);
+    }
+
+    else if (info.dgs === "" && info.film === "" && info.ark === "") {
+        perm_str = "";
+    }
+    
+    return perm_str;
+}
+
+
 async function record_page() {
     const ark_id = window.location.href.split("/")[5].split("?")[0];
     const response = await r_fetch_gedcomx(ark_id);
@@ -150,12 +197,8 @@ async function record_page() {
     }
     
     const info = await r_parse_json_info(response);
-    if (info.dgs === "" && info.film !== "")
-        info.dgs = await r_fetch_dgsno_from_film(info.film);
-    else if (info.dgs === "" && info.film === "")
-        return;
-        
-    const perm_str = await r_fetch_permissions(info.dgs);
+    const perm_str = await r_determine_permissions_from_ids(info)
+
     if (perm_str !== "") {
         const permissions = s_parse_permissions(perm_str);
         r_display_permissions(permissions);
