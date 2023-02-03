@@ -7,5 +7,9 @@
         "matches": ["*://www.familysearch.org/search/catalog/*", "*://www.familysearch.org/ark:/61903/1:1:*"],
         "js": ["main_script.js"],
         "run_at": "document_end"
+    }],
+    "web_accessible_resources": [{
+        "resources": ["injected_script.js"],
+        "matches": ["https://*.familysearch.org/*"]
     }]
 }
