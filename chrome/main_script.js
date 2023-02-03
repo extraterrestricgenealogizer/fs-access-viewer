@@ -205,7 +205,7 @@ function c_get_row_permissions_catalog_fallback(film_no, dgs_no) {
     // Fallback to using 'data' JS object defined in page scripts.
     // Make approximate deep copy and use that instead of live object.
     // Check that it's valid.
-    const data_copy = structuredClone(window.wrappedJSObject.data);
+    const data_copy = structuredClone(data);
     if (!Array.isArray(data_copy.film_note)) {
         return;
     }
